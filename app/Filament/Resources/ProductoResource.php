@@ -25,21 +25,28 @@ class ProductoResource extends Resource
             ->schema([
                 Forms\Components\TextInput::make('nombre')
                     ->required()
+                    ->unique(ignorable: fn ($record) => $record)
                     ->maxLength(100),
                 Forms\Components\TextInput::make('precio')
                     ->required()
+                    ->minValue(0.01)
                     ->numeric(),
                 Forms\Components\DatePicker::make('fecha_vencimiento')
+                    ->native(false)
+                    ->minDate(now())
                     ->required(),
                 Forms\Components\TextInput::make('descripcion')
                     ->required()
+                    ->minLength(10)
                     ->maxLength(100),
                 Forms\Components\TextInput::make('categoria')
                     ->required()
+                    ->minLength(10)
                     ->maxLength(255),
-                Forms\Components\TextInput::make('imagen')
-                    ->required()
-                    ->maxLength(255),
+                Forms\Components\FileUpload::make('imagen')
+                    ->image()
+                    ->imageEditor()
+                    ->required(),
             ]);
     }
 
@@ -59,8 +66,7 @@ class ProductoResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('categoria')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('imagen')
-                    ->searchable(),
+                Tables\Columns\ImageColumn::make('imagen'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
